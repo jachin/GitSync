@@ -44,8 +44,6 @@ growl = gntp.notifier.GrowlNotifier(
     hostname = "localhost",
 )
 
-pprint.pprint( growl.register() )
-
 def growl_start( ):
     growl.notify(
         noteType = "Sync Starting",
