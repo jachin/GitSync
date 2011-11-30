@@ -67,7 +67,6 @@ def local_has_modified_files ( local_path ):
 @task
 def get_remote_git_repo ( remote_path ):
     git_repo = os.path.join( remote_path, '.git' )
-
     return git_repo
 
 
