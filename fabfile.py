@@ -11,7 +11,7 @@ from fsevents import Observer
 from fsevents import Stream
 
 @task
-def create_remote_master_repository( remote_path, local_branch ):
+def init_remote_master_repository( remote_path, local_branch ):
 
     puts("Setting up %s" % remote_path)
 
@@ -71,8 +71,8 @@ def get_remote_git_repo ( remote_path ):
 
 
 @task
-def get_local_git_clone ( remote_user, remote_host, remote_path, local_path ):
-    local( "git clone ssh://%s@%s/%s %s" % (remote_user, remote_host, remote_path, local_path) )
+def get_local_git_clone ( remote_path, local_path ):
+    local( "git clone ssh://%s/%s %s" % ( env.host, remote_path, local_path ) )
 
 
 @task
@@ -155,13 +155,17 @@ def send_remote_changes_to_local( remote_path, local_path ):
 @task
 def sync( remote_path, local_path, local_branch ):
     puts(blue('sync'))
+
+    if not os.path.exists( local_path ):
+        init( remote_path, local_path, local_branch )
+
     if remote_has_modified_files( remote_path ):
         send_remote_changes_to_local( remote_path, local_path )
     send_local_changes_to_remote( remote_path, local_path, local_branch )
 
 
 @task
-def observe( remote_path, local_path ):
+def observe( remote_host, remote_path, local_path, local_branch ):
 
     def callback( event ):
 
@@ -174,9 +178,9 @@ def observe( remote_path, local_path ):
             puts(green('To stop: Ctrl-\\'))
 
     # Do an initial sync
-    sync( amm_name, local_path )
+    sync( remote_host, remote_path, local_path, local_branch )
 
-    puts(green('Observing: %s' % local_path))
+    puts( green( 'Observing: %s' % local_path ) )
 
     # Start watching the directory
     observer = Observer()
@@ -186,6 +190,6 @@ def observe( remote_path, local_path ):
 
 
 @task
-def init ( remote_user, remote_host, remote_path, local_path ):
-    create_remote_master_repository( remote_path )
-    get_local_git_clone ( remote_user, remote_host, remote_path, local_path )
+def init ( remote_path, local_path, local_branch ):
+    init_remote_master_repository( remote_path, local_branch )
+    get_local_git_clone ( remote_path, local_path )

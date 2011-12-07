@@ -65,13 +65,29 @@ def callback( event ):
     #Skip sync for file change that are in the .git directory.
     if not git_dir in filename:
         growl_start( )
-        subprocess.call("fab -H %s sync:remote_path=%s,local_path=%s,local_branch=%s" % ( remote_host, remote_path, local_path, local_branch ), shell=True)
+        subprocess.call(
+            "fab -H %s sync:remote_path=%s,local_path=%s,local_branch=%s" % ( 
+                remote_host
+                , remote_path
+                , local_path
+                , local_branch
+            )
+            , shell=True
+        )
         growl_done( )
         print 'To stop: Ctrl-\\'
 
 # Do an initial sync
 growl_start( )
-subprocess.call("fab -H %s sync:remote_path=%s,local_path=%s,local_branch=%s" % ( remote_host, remote_path, local_path, local_branch ), shell=True)
+subprocess.call(
+    "fab -H %s sync:remote_path=%s,local_path=%s,local_branch=%s" % (
+        remote_host
+        , remote_path
+        , local_path
+        , local_branch
+    )
+    , shell=True
+)
 growl_done( )
 print 'To stop: Ctrl-\\'
 
