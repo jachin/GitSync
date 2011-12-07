@@ -19,7 +19,6 @@ parser.add_argument(
     'config_file'
     , nargs='?'
     , type=argparse.FileType('r')
-    , default="./git_sync.cfg"
 )
 
 args = parser.parse_args()
