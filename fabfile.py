@@ -32,6 +32,10 @@ def init_remote_master_repository( remote_path, local_branch ):
             run( "git commit -m 'Inital Commit'" )
             run( "git add ." )
             run( "git commit -m 'add project'" )
+    
+    with cd ( remote_path ):
+        git_branch_output = run( "git branch" )
+        pprint.pprint( git_branch_output )
 
 @task
 def remote_has_modified_files( remote_path ):
@@ -112,14 +116,14 @@ def merge_local_master ( local_path ):
 
 @task
 def pull_and_merge_local ( local_path ):
-    pull_local(local_path)
-    merge_local_master(local_path)
+    pull_local( local_path )
+    merge_local_master( local_path )
 
 
 @task
 def commit_local_modified_files ( local_path ):
     with lcd ( local_path ):
-        if local_has_modified_files(local_path):
+        if local_has_modified_files( local_path ):
             local( "git add ." )
             local(
                 "git commit -a -m 'committing all changes from a local machine'"
@@ -154,13 +158,14 @@ def send_remote_changes_to_local( remote_path, local_path ):
 
 @task
 def sync( remote_path, local_path, local_branch ):
-    puts(blue('sync'))
+    puts( blue( 'sync' ) )
 
     if not os.path.exists( local_path ):
         init( remote_path, local_path, local_branch )
 
     if remote_has_modified_files( remote_path ):
         send_remote_changes_to_local( remote_path, local_path )
+    
     send_local_changes_to_remote( remote_path, local_path, local_branch )
 
 
