@@ -4,6 +4,7 @@ import ConfigParser
 import argparse
 import pprint
 import logging
+import string
 
 from fabric.api import *
 from fabric.utils import *
@@ -39,15 +40,15 @@ remote_path   =  config.get('GitSync', 'remote_path')
 remote_host   =  config.get('GitSync', 'remote_host')
 remote_user   =  config.get('GitSync', 'remote_user')
 
-git_ignore = []
+git_ignore_lines = []
 
 for (key, value) in config.items( 'GitIgnore' ):
-    git_ignore.append(value)
+    git_ignore_lines.append(value)
 
 
-git_ignore = sorted( git_ignore )
+git_ignore_lines = sorted( git_ignore_lines )
 
-pprint.pprint( git_ignore )
+pprint.pprint( git_ignore_lines )
 
 @task
 def init_remote_master_repository( remote_path, local_branch ):
@@ -72,10 +73,18 @@ def init_remote_master_repository( remote_path, local_branch ):
             run( "git commit -m 'Inital Commit'" )
             run( "git add ." )
             run( "git commit -m 'add project'" )
-    
+
+
+@task
+def update_git_ignore_file( remote_path, git_ignore_lines ):
     with cd ( remote_path ):
-        git_branch_output = run( "git branch" )
-        pprint.pprint( git_branch_output )
+        for line in git_ignore_lines:
+            if not contains( '.gitignore_new', line ):
+                append( '.gitignore_new', line )
+
+        run('rm .gitignore', shell=False)
+        run('mv .gitignore_new .gitignore', shell=False)
+
 
 @task
 def remote_has_modified_files( remote_path ):
@@ -306,6 +315,14 @@ execute(
 growl_done( )
 
 print 'To stop: Ctrl-\\'
+
+
+execute(
+     update_git_ignore_file
+    , host = remote_host
+    , remote_path = remote_path
+    , git_ignore_lines=git_ignore_lines
+)
 
 # Start watching the directory
 observer = Observer()
