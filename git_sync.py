@@ -69,7 +69,11 @@ def growl_done( ):
     growl.notify(
         noteType = "Sync Done",
         title = "Sync is finished",
-        description = "Completed sync of local_path and remote_path on remote_host",
+        description = "Completed sync of %s and %s on %s" % (
+            local_path,
+            remote_path,
+            remote_host,
+        ),
     )
 
 def callback( event ):
