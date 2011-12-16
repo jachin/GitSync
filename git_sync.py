@@ -18,38 +18,6 @@ from fsevents import Stream
 import gntp
 import gntp.notifier
 
-parser = argparse.ArgumentParser(
-    description='Use git to sync a site on pion to your local machine.'
-)
-
-parser.add_argument(
-    'config_file'
-    , nargs='?'
-    , type=argparse.FileType('r')
-)
-
-args = parser.parse_args()
-
-config = ConfigParser.ConfigParser()
-
-config.readfp(args.config_file)
-
-local_path    =  config.get('GitSync', 'local_path')
-local_branch  =  config.get('GitSync', 'local_branch')
-remote_path   =  config.get('GitSync', 'remote_path')
-remote_host   =  config.get('GitSync', 'remote_host')
-remote_user   =  config.get('GitSync', 'remote_user')
-
-git_ignore_lines = []
-
-for (key, value) in config.items( 'GitIgnore' ):
-    git_ignore_lines.append(value)
-
-
-git_ignore_lines = sorted( git_ignore_lines )
-
-pprint.pprint( git_ignore_lines )
-
 @task
 def init_remote_master_repository( remote_path, local_branch ):
 
@@ -224,17 +192,49 @@ def init ( remote_path, local_path, local_branch ):
     get_local_git_clone ( remote_path, local_path )
 
 
+# Setup Parser
+parser = argparse.ArgumentParser(
+    description='Use git to sync a site on pion to your local machine.'
+)
+
+parser.add_argument(
+    'config_file'
+    , nargs='?'
+    , type=argparse.FileType('r')
+)
+
+args = parser.parse_args()
+
+# Read in config file.
+config = ConfigParser.ConfigParser()
+
+config.readfp(args.config_file)
+
+local_path    =  config.get('GitSync', 'local_path')
+local_branch  =  config.get('GitSync', 'local_branch')
+remote_path   =  config.get('GitSync', 'remote_path')
+remote_host   =  config.get('GitSync', 'remote_host')
+remote_user   =  config.get('GitSync', 'remote_user')
+
+git_ignore_lines = []
+
+for (key, value) in config.items( 'GitIgnore' ):
+    git_ignore_lines.append(value)
+
+
+git_ignore_lines = sorted( git_ignore_lines )
+
 if remote_user:
     remote_host  =  remote_user + '@' + remote_host
 
 
+# Setup Growl notifications.
 growl = gntp.notifier.GrowlNotifier(
     applicationName      = "GitSync",
     notifications        = ["Sync Starting", "Sync Done"],
     defaultNotifications = ["Sync Starting","Sync Done"],
     hostname             = "localhost",
 )
-
 
 def growl_start( ):
     growl.notify(
@@ -257,6 +257,7 @@ def growl_done( ):
             remote_host,
         ),
     )
+
 
 def callback( event ):
 
@@ -290,7 +291,6 @@ execute(
 growl_done( )
 
 print 'To stop: Ctrl-\\'
-
 
 execute(
      update_git_ignore_file
