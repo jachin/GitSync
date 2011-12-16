@@ -219,31 +219,6 @@ def sync( remote_path, local_path, local_branch ):
 
 
 @task
-def observe( remote_host, remote_path, local_path, local_branch ):
-
-    def callback( event ):
-
-        filename = event.name
-        git_dir = os.path.join( local_path, '.git' )
-
-        #Skip sync for file change that are in the .git directory.
-        if not git_dir in filename:
-            sync( amm_name, local_path )
-            puts(green('To stop: Ctrl-\\'))
-
-    # Do an initial sync
-    sync( remote_host, remote_path, local_path, local_branch )
-
-    puts( green( 'Observing: %s' % local_path ) )
-
-    # Start watching the directory
-    observer = Observer()
-    stream = Stream(callback, local_path, file_events=True)
-    observer.schedule(stream)
-    observer.start()
-
-
-@task
 def init ( remote_path, local_path, local_branch ):
     init_remote_master_repository( remote_path, local_branch )
     get_local_git_clone ( remote_path, local_path )
