@@ -28,6 +28,7 @@ def init_remote_master_repository( remote_path, local_branch ):
             append( '.gitignore', '.DS_Store' )
             append( '.gitignore', '.svn*' )
             append( '.gitignore', 'data/asset/*' )
+            append( '.gitignore', 'data/tmp/*' )
             run( "git add .gitignore" )
             run( "git commit -m 'Inital Commit'" )
             run( "git add ." )

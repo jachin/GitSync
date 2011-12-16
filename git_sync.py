@@ -33,6 +33,17 @@ remote_path   =  config.get('GitSync', 'remote_path')
 remote_host   =  config.get('GitSync', 'remote_host')
 remote_user   =  config.get('GitSync', 'remote_user')
 
+git_ignore = []
+
+for (key, value) in config.items( 'GitIgnore' ):
+    git_ignore.append(value)
+
+
+git_ignore = sorted( git_ignore )
+
+pprint.pprint( git_ignore )
+
+
 if remote_user:
     remote_host  =  remote_user + '@' + remote_host
 
@@ -47,7 +58,11 @@ def growl_start( ):
     growl.notify(
         noteType = "Sync Starting",
         title = "Sync is starting",
-        description = "Starting to sync local_path and remote_path on remote_host",
+        description = "Starting to sync %s and %s on %s" % (
+            local_path,
+            remote_path,
+            remote_host,
+        ),
     )
 
 def growl_done( ):
