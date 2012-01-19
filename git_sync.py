@@ -18,6 +18,29 @@ from fsevents import Stream
 import gntp
 import gntp.notifier
 
+# These are a bunch of constants that identify different type of file system
+#  events and the fsevents library uses.
+kFSEventStreamEventFlagNone              = 0x00000000
+kFSEventStreamEventFlagMustScanSubDirs   = 0x00000001
+kFSEventStreamEventFlagUserDropped       = 0x00000002
+kFSEventStreamEventFlagKernelDropped     = 0x00000004
+kFSEventStreamEventFlagEventIdsWrapped   = 0x00000008
+kFSEventStreamEventFlagHistoryDone       = 0x00000010
+kFSEventStreamEventFlagRootChanged       = 0x00000020
+kFSEventStreamEventFlagMount             = 0x00000040
+kFSEventStreamEventFlagUnmount           = 0x00000080
+kFSEventStreamEventFlagItemCreated       = 0x00000100 #256
+kFSEventStreamEventFlagItemRemoved       = 0x00000200
+kFSEventStreamEventFlagItemInodeMetaMod  = 0x00000400
+kFSEventStreamEventFlagItemRenamed       = 0x00000800
+kFSEventStreamEventFlagItemModified      = 0x00001000
+kFSEventStreamEventFlagItemFinderInfoMod = 0x00002000
+kFSEventStreamEventFlagItemChangeOwner   = 0x00004000
+kFSEventStreamEventFlagItemXattrMod      = 0x00008000
+kFSEventStreamEventFlagItemIsFile        = 0x00010000
+kFSEventStreamEventFlagItemIsDir         = 0x00020000
+kFSEventStreamEventFlagItemIsSymlink     = 0x00040000
+
 @task
 def init_remote_master_repository( remote_path, local_branch, git_ignore_lines ):
 
@@ -309,19 +332,26 @@ def callback( event ):
     git_dir  = os.path.join( local_path, '.git' )
     pprint.pprint(event)
 
-    #Skip sync for file change that are in the .git directory.
-    if not git_dir in filename:
-        growl_start( )
-        execute(
-            sync
-            , host             = remote_host
-            , remote_path      = remote_path
-            , local_path       = local_path
-            , local_branch     = local_branch
-            , git_ignore_lines = git_ignore_lines
-        )
-        growl_done( )
-        print 'To stop: Ctrl-\\'
+    if event.mask == kFSEventStreamEventFlagItemCreated:
+        # Sublime Text Seems to trigger a lot of these and they don't seem to
+        #  warrant a new sync, so lets skip these for now.
+        return
+    
+    if git_dir in filename:
+        #Skip sync for file change that are in the .git directory.
+        return
+
+    growl_start( )
+    execute(
+        sync
+        , host             = remote_host
+        , remote_path      = remote_path
+        , local_path       = local_path
+        , local_branch     = local_branch
+        , git_ignore_lines = git_ignore_lines
+    )
+    growl_done( )
+    print 'To stop: Ctrl-\\'
 
 # Do an initial sync
 growl_start( )
@@ -345,28 +375,3 @@ stream = Stream(callback, local_path, file_events=True)
 observer.schedule(stream)
 observer.start()
 
-
-
-# enum { 
-#     kFSEventStreamEventFlagNone = 0x00000000, 
-#     kFSEventStreamEventFlagMustScanSubDirs = 0x00000001, 
-#     kFSEventStreamEventFlagUserDropped = 0x00000002, 
-#     kFSEventStreamEventFlagKernelDropped = 0x00000004, 
-#     kFSEventStreamEventFlagEventIdsWrapped = 0x00000008, 
-#     kFSEventStreamEventFlagHistoryDone = 0x00000010, 
-#     kFSEventStreamEventFlagRootChanged = 0x00000020, 
-#     kFSEventStreamEventFlagMount = 0x00000040, 
-#     kFSEventStreamEventFlagUnmount = 0x00000080, /* These flags are only set if you specified the FileEvents*/
-#     /* flags when creating the stream.*/
-#     kFSEventStreamEventFlagItemCreated = 0x00000100, 
-#     kFSEventStreamEventFlagItemRemoved = 0x00000200, 
-#     kFSEventStreamEventFlagItemInodeMetaMod = 0x00000400, 
-#     kFSEventStreamEventFlagItemRenamed = 0x00000800, 
-#     kFSEventStreamEventFlagItemModified = 0x00001000, 
-#     kFSEventStreamEventFlagItemFinderInfoMod = 0x00002000, 
-#     kFSEventStreamEventFlagItemChangeOwner = 0x00004000, 
-#     kFSEventStreamEventFlagItemXattrMod = 0x00008000, 
-#     kFSEventStreamEventFlagItemIsFile = 0x00010000, 
-#     kFSEventStreamEventFlagItemIsDir = 0x00020000, 
-#     kFSEventStreamEventFlagItemIsSymlink = 0x00040000 
-# };
