@@ -330,7 +330,7 @@ def callback( event ):
 
     filename = event.name
     git_dir  = os.path.join( local_path, '.git' )
-    pprint.pprint(event)
+    #pprint.pprint(event)
 
     if event.mask == kFSEventStreamEventFlagItemCreated:
         # Sublime Text Seems to trigger a lot of these and they don't seem to
