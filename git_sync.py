@@ -239,7 +239,6 @@ def send_remote_changes_to_local ( remote_path, local_path ):
 
 @task
 def sync ( remote_path, local_path, local_branch, git_ignore_lines ):
-    puts( blue( 'sync' ) )
 
     if not os.path.exists( local_path ):
         init( remote_path, local_path, local_branch, git_ignore_lines )
@@ -298,10 +297,19 @@ if remote_user:
 # Setup Growl notifications.
 growl = gntp.notifier.GrowlNotifier(
     applicationName      = "GitSync",
-    notifications        = ["Sync Starting", "Sync Done"],
-    defaultNotifications = ["Sync Starting","Sync Done"],
     hostname             = "localhost",
+    notifications        = [
+        'Sync Ready',
+        "Sync Starting",
+        "Sync Done",
+    ],
+    defaultNotifications = [
+        'Sync Ready',
+        "Sync Starting",
+        "Sync Done",
+    ],
 )
+growl.register()
 
 def growl_start( ):
     growl.notify(
@@ -330,7 +338,6 @@ def callback( event ):
 
     filename = event.name
     git_dir  = os.path.join( local_path, '.git' )
-    #pprint.pprint(event)
 
     if event.mask == kFSEventStreamEventFlagItemCreated:
         # Sublime Text Seems to trigger a lot of these and they don't seem to
