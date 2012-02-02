@@ -249,6 +249,14 @@ def sync ( remote_path, local_path, local_branch, git_ignore_lines ):
     send_local_changes_to_remote( remote_path, local_path, local_branch )
 
 
+def initial_sync ( remote_path, local_path, local_branch, git_ignore_lines ):
+    if not os.path.exists( local_path ):
+        init( remote_path, local_path, local_branch, git_ignore_lines )
+
+    send_remote_changes_to_local( remote_path, local_path )
+    send_local_changes_to_remote( remote_path, local_path, local_branch )
+
+
 @task
 def init ( remote_path, local_path, local_branch, git_ignore_lines ):
     init_remote_master_repository( remote_path, local_branch, git_ignore_lines )
@@ -364,7 +372,7 @@ def callback( event ):
 growl_start( )
 
 execute(
-    sync
+    initial_sync
     , host             = remote_host
     , remote_path      = remote_path
     , local_path       = local_path
