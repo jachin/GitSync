@@ -20,6 +20,10 @@ Skip any steps that install software you already have.
    ```sudo pip install MacFSEvents```
 7. Install the python binding for growl.
    ```sudo pip install gntp```
+8. Install libyaml
+   ```sudo brew install libyaml```
+9. Install PyYAML
+   ```sudo pip install PyYAML```
 
 
 Configuration

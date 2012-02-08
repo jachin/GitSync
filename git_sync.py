@@ -1,10 +1,10 @@
 import os
 import subprocess
-import ConfigParser
 import argparse
 import pprint
 import logging
 import string
+import yaml
 
 from fabric.api import *
 from fabric.utils import *
@@ -280,27 +280,20 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Read in config file.
-config = ConfigParser.ConfigParser()
+config = yaml.load(args.config_file)
 
-config.readfp(args.config_file)
+local_path        =  config['local_path']
+local_branch      =  config['local_branch']
+remote_path       =  config['remote_path']
+remote_host       =  config['remote_host']
+remote_user       =  config['remote_user']
+git_ignore_lines  =  config['git_ignore']
 
-local_path    =  config.get('GitSync', 'local_path')
-local_branch  =  config.get('GitSync', 'local_branch')
-remote_path   =  config.get('GitSync', 'remote_path')
-remote_host   =  config.get('GitSync', 'remote_host')
-remote_user   =  config.get('GitSync', 'remote_user')
-
-git_ignore_lines = []
-
-for (key, value) in config.items( 'GitIgnore' ):
-    git_ignore_lines.append(value)
-
-
+# Sort the git ignore lines.
 git_ignore_lines = sorted( git_ignore_lines )
 
 if remote_user:
     remote_host  =  remote_user + '@' + remote_host
-
 
 # Setup Growl notifications.
 growl = gntp.notifier.GrowlNotifier(
