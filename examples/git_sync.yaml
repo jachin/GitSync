@@ -1,0 +1,9 @@
+local_path: /somewhere/on/my/local/machine
+local_branch: local_branch_name
+remote_host: remosthost
+remote_user: my_user_on_the_remote_host
+remote_path: /somewhere/on/the/remote/machine
+
+git_ignore:
+ - .DS_Store
+ - .svn*
