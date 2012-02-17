@@ -71,8 +71,8 @@ On the first sync it will assume the location on the local file system is empty 
    - remote_path: The path on the remote system with the files in it you want to sync with.
    - git_ignore: A list of patterns you want git to ignore, in this context that means these are files that will not get synced.
 
-Caution
--------
+Current Git Users: Caution
+--------------------------
 
 If you are already using git as a version control system, be careful. This has been take in into account (somewhat) but not really tested been tested yet.
 
