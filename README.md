@@ -81,7 +81,7 @@ Running git_sync.py
 -------------------
 
 In Terminal run the following command:
-```python git_sync.py path/to/your/config/file.yaml```
+```python path/to/git_sync.py path/to/your/config/file.yaml```
 
 It should do some setup work. This could take a lot time if this is the initial sync, if there are a lot of changes or if the network connection is slow.
 
