@@ -8,6 +8,8 @@ import logging
 import string
 import yaml
 
+from signal import pause
+
 from fabric.api import *
 from fabric.utils import *
 from fabric.contrib.console import confirm
@@ -80,9 +82,7 @@ def update_git_ignore_file( remote_path, git_ignore_lines ):
 
 @task
 def remote_has_modified_files( remote_path ):
-    puts(blue('remote_has_modified_files'))
-    puts(red(env.hosts))
-    with cd ( remote_path ):
+    with cd( remote_path ):
         with settings( warn_only=True ):
             with hide('running', 'status', 'warnings', 'stderr', 'stdout'):
 
@@ -305,11 +305,13 @@ growl = gntp.notifier.GrowlNotifier(
         'Sync Ready',
         "Sync Starting",
         "Sync Done",
+        "Sync Failed",
     ],
     defaultNotifications = [
         'Sync Ready',
         "Sync Starting",
         "Sync Done",
+        "Sync Failed",
     ],
 )
 growl.register()
@@ -336,32 +338,51 @@ def growl_done( ):
         ),
     )
 
+def growl_failed( ):
+    growl.notify(
+        noteType    = "Sync Failed",
+        title       = "Sync Failed",
+        description = "Failed to sync %s and %s on %s" % (
+            local_path,
+            remote_path,
+            remote_host,
+        ),
+    )
+
 
 def callback( event ):
-
-    filename = event.name
-    git_dir  = os.path.join( local_path, '.git' )
 
     if event.mask == kFSEventStreamEventFlagItemCreated:
         # Sublime Text Seems to trigger a lot of these and they don't seem to
         #  warrant a new sync, so lets skip these for now.
         return
+
+    filename = event.name
+    git_dir  = os.path.join( local_path, '.git' )
     
     if git_dir in filename:
         #Skip sync for file change that are in the .git directory.
         return
 
     growl_start( )
-    execute(
-        sync
-        , host             = remote_host
-        , remote_path      = remote_path
-        , local_path       = local_path
-        , local_branch     = local_branch
-        , git_ignore_lines = git_ignore_lines
-    )
-    growl_done( )
-    print 'To stop: Ctrl-\\'
+    try:
+        execute(
+            sync
+            , host             = remote_host
+            , remote_path      = remote_path
+            , local_path       = local_path
+            , local_branch     = local_branch
+            , git_ignore_lines = git_ignore_lines
+        )
+    except Exception as inst:
+        print "sync failed."
+        print type(inst)
+        print inst.args
+        print inst
+        growl_failed( )
+        raise
+    else:
+        growl_done( )
 
 # Do an initial sync
 growl_start( )
@@ -377,11 +398,17 @@ execute(
 
 growl_done( )
 
-print 'To stop: Ctrl-\\'
-
 # Start watching the directory
 observer = Observer()
 stream = Stream(callback, local_path, file_events=True)
 observer.schedule(stream)
 observer.start()
+
+try:
+    while 1:
+        pause()
+except KeyboardInterrupt:
+    observer.unschedule(stream)
+    observer.stop()
+    observer.join()
 
