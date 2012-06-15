@@ -284,18 +284,19 @@ args = parser.parse_args()
 # Read in config file.
 config = yaml.load(args.config_file)
 
-local_path        =  config['local_path']
-local_branch      =  config['local_branch']
-remote_path       =  config['remote_path']
-remote_host       =  config['remote_host']
-remote_user       =  config['remote_user']
-git_ignore_lines  =  config['git_ignore']
+local_path       = config['local_path']
+local_branch     = config['local_branch']
+remote_path      = config['remote_path']
+remote_host      = config['remote_host']
+remote_user      = config['remote_user']
+git_ignore_lines = config['git_ignore']
+observer         = Observer()
 
 # Sort the git ignore lines.
 git_ignore_lines = sorted( git_ignore_lines )
 
 if remote_user:
-    remote_host  =  remote_user + '@' + remote_host
+    remote_host = remote_user + '@' + remote_host
 
 # Setup Growl notifications.
 growl = gntp.notifier.GrowlNotifier(
@@ -350,7 +351,52 @@ def growl_failed( ):
     )
 
 
+def run_remote_has_modified_files( ):
+    result = execute(
+        remote_has_modified_files
+        , host             = remote_host
+        , remote_path      = remote_path
+    )
+    return result[remote_host]
+
+
+def run_send_remote_changes_to_local( ):
+    result = execute(
+        send_remote_changes_to_local
+        , host             = remote_host
+        , remote_path      = remote_path
+        , local_path       = local_path
+    )
+    return result[remote_host]
+
+
+def run_send_local_changes_to_remote( ):
+    result = execute(
+        send_local_changes_to_remote
+        , host             = remote_host
+        , remote_path      = remote_path
+        , local_path       = local_path
+        , local_branch     = local_branch
+    )
+    return result[remote_host]
+
+
+def run_initial_sync( ):
+    growl_start( )
+    execute(
+        initial_sync
+        , host             = remote_host
+        , remote_path      = remote_path
+        , local_path       = local_path
+        , local_branch     = local_branch
+        , git_ignore_lines = git_ignore_lines
+    )
+    growl_done( )
+
+
 def callback( event ):
+
+    global observer, stream
 
     if event.mask == kFSEventStreamEventFlagItemCreated:
         # Sublime Text Seems to trigger a lot of these and they don't seem to
@@ -365,15 +411,22 @@ def callback( event ):
         return
 
     growl_start( )
+
     try:
-        execute(
-            sync
-            , host             = remote_host
-            , remote_path      = remote_path
-            , local_path       = local_path
-            , local_branch     = local_branch
-            , git_ignore_lines = git_ignore_lines
-        )
+        if run_remote_has_modified_files():
+            # Stop observing.
+            observer.unschedule(stream)
+            observer.stop()
+
+            run_send_remote_changes_to_local()
+
+            # Start observing again.
+            observer = Observer()
+            observer.schedule(stream)
+            observer.start()
+
+        run_send_local_changes_to_remote()
+
     except Exception as inst:
         print "sync failed."
         print type(inst)
@@ -384,31 +437,18 @@ def callback( event ):
     else:
         growl_done( )
 
-# Do an initial sync
-growl_start( )
-
-execute(
-    initial_sync
-    , host             = remote_host
-    , remote_path      = remote_path
-    , local_path       = local_path
-    , local_branch     = local_branch
-    , git_ignore_lines = git_ignore_lines
-)
-
-growl_done( )
+run_initial_sync( )
 
 # Start watching the directory
-observer = Observer()
 stream = Stream(callback, local_path, file_events=True)
 observer.schedule(stream)
 observer.start()
 
 try:
     while 1:
-        pause()
+        pause( )
 except KeyboardInterrupt:
     observer.unschedule(stream)
-    observer.stop()
-    observer.join()
+    observer.stop( )
+    observer.join( )
 
