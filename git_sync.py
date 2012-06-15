@@ -336,17 +336,6 @@ def growl_done( ):
         print 'Growl is probably not running.'
         print 'GitSync Finished'
 
-def growl_failed( ):
-    growl.notify(
-        noteType    = "Sync Failed",
-        title       = "Sync Failed",
-        description = "Failed to sync %s and %s on %s" % (
-            local_path,
-            remote_path,
-            remote_host,
-        ),
-    )
-
 
 def run_remote_has_modified_files( ):
     result = execute(
