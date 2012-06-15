@@ -7,6 +7,7 @@ import pprint
 import logging
 import string
 import yaml
+import socket
 
 from signal import pause
 
@@ -21,6 +22,7 @@ from fsevents import Stream
 
 import gntp
 import gntp.notifier
+from gntp.notifier import mini
 
 # These are a bunch of constants that identify different type of file system
 #  events and the fsevents library uses.
@@ -262,7 +264,7 @@ def initial_sync ( remote_path, local_path, local_branch, git_ignore_lines ):
 @task
 def init ( remote_path, local_path, local_branch, git_ignore_lines ):
     init_remote_master_repository( remote_path, local_branch, git_ignore_lines )
-    get_local_git_clone ( remote_path, local_path )
+    get_local_git_clone( remote_path, local_path )
     local_create_local_branch( local_path, local_branch )
     with lcd( local_path ):
         local( "git checkout %s" % (local_branch) )
@@ -298,46 +300,41 @@ git_ignore_lines = sorted( git_ignore_lines )
 if remote_user:
     remote_host = remote_user + '@' + remote_host
 
-# Setup Growl notifications.
-growl = gntp.notifier.GrowlNotifier(
-    applicationName      = "GitSync",
-    hostname             = "localhost",
-    notifications        = [
-        'Sync Ready',
-        "Sync Starting",
-        "Sync Done",
-        "Sync Failed",
-    ],
-    defaultNotifications = [
-        'Sync Ready',
-        "Sync Starting",
-        "Sync Done",
-        "Sync Failed",
-    ],
-)
-growl.register()
-
 def growl_start( ):
-    growl.notify(
-        noteType    = "Sync Starting",
-        title       = "Sync is starting",
-        description = "Starting to sync %s and %s on %s" % (
-            local_path,
-            remote_path,
-            remote_host,
-        ),
-    )
+    try:
+        mini(
+            "Starting to sync %s and %s on %s" % (
+                local_path,
+                remote_path,
+                remote_host,
+            )
+            , applicationName='GitSync'
+            , noteType='Message'
+            , title='GitSync Starting'
+        )
+    except socket.error:
+        print 'Unable to send growl notification.'
+        print 'Growl is probably not running.'
+        print 'GitSync Starting'
+
+
 
 def growl_done( ):
-    growl.notify(
-        noteType    = "Sync Done",
-        title       = "Sync is finished",
-        description = "Completed sync of %s and %s on %s" % (
-            local_path,
-            remote_path,
-            remote_host,
-        ),
-    )
+    try:
+        mini(
+            "Completed sync of %s and %s on %s" % (
+                local_path,
+                remote_path,
+                remote_host,
+            )
+            , applicationName='GitSync'
+            , noteType='Message'
+            , title='GitSync Finished'
+        )
+    except socket.error:
+        print 'Unable to send growl notification.'
+        print 'Growl is probably not running.'
+        print 'GitSync Finished'
 
 def growl_failed( ):
     growl.notify(
