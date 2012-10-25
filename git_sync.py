@@ -88,11 +88,9 @@ def remote_has_modified_files( remote_path ):
         with settings( warn_only=True ):
             with hide('running', 'status', 'warnings', 'stderr', 'stdout'):
 
-                git_status_output = run( "git status . " )
+                git_status_output = run( "git status --porcelain ." )
 
-                git_clean_status = "nothing to commit (working directory clean)"
-                puts( red( git_status_output ) )
-                if git_clean_status in git_status_output:
+                if not git_status_output:
                     puts(cyan("%s (remote) is clean." % remote_path))
                     return False
                 else:
@@ -111,10 +109,9 @@ def local_has_modified_files ( local_path ):
         with settings( warn_only=True ):
             with hide('running', 'status', 'warnings', 'stderr', 'stdout'):
 
-                git_status_output = local( "git status . ", capture=True )
+                git_status_output = local( "git status --porcelain .", capture=True )
 
-                git_clean_status = "nothing to commit (working directory clean)"
-                if git_clean_status in git_status_output:
+                if not git_status_output:
                     puts( cyan("%s (local) is clean." % local_path ) )
                     return False
                 else:
