@@ -39,7 +39,7 @@ Skip any steps that install software you already have.
    ```brew install libyaml```
 9. Install PyYAML
    ```sudo pip install PyYAML```
-10. Install Growl http://growl.info/
+10. Install Growl 2 (from the app store) http://growl.info/
 
 
 Remote Dependencies
