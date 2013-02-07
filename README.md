@@ -92,7 +92,6 @@ Once the sync in finished, check on the server, and the changes should have been
 License
 -------
 
-- [LICENSE] ([MIT License])
+- [LICENSE](LICENSE) ([MIT License][MIT])
 
-[LICENSE]: LICENSE "LICENSE file"
-[MIT License]: http://www.opensource.org/licenses/MIT "The MIT License (MIT)"
+[MIT]: http://www.opensource.org/licenses/MIT "The MIT License (MIT)"
