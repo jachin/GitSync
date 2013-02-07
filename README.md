@@ -88,3 +88,11 @@ It should do some setup work. This could take a lot time if this is the initial 
 Once it's done start working. Open files. Save files. Create files. Every time you do something that results in a file system event you should see a growl notification that git sync has started and shortly after another one that it is finished.
 
 Once the sync in finished, check on the server, and the changes should have been synced.
+
+License
+-------
+
+- [LICENSE] ([MIT License])
+
+[LICENSE]: LICENSE "LICENSE file"
+[MIT License]: http://www.opensource.org/licenses/MIT "The MIT License (MIT)"
