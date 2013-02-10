@@ -281,7 +281,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Read in config file.
-config = yaml.load(args.config_file)
+config = yaml.safe_load(args.config_file)
 
 local_path       = config['local_path']
 local_branch     = config['local_branch']
