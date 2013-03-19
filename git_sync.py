@@ -12,10 +12,10 @@ import socket
 from signal import pause
 
 from fabric.api import *
-from fabric.utils import *
+from fabric.utils import puts
 from fabric.contrib.console import confirm
-from fabric.contrib.files import *
-from fabric.colors import *
+from fabric.contrib.files import append, contains, exists
+from fabric.colors import blue, cyan, green, magenta, red, white, yellow
 
 from fsevents import Observer
 from fsevents import Stream
@@ -74,12 +74,19 @@ def init_remote_master_repository( remote_path, local_branch, git_ignore_lines )
 
 @task
 def update_git_ignore_file( remote_path, git_ignore_lines ):
-    with cd ( remote_path ):
-        for line in git_ignore_lines:
-            if not contains( '.gitignore_new', line ):
-                append( '.gitignore_new', line )
 
-        run('mv .gitignore_new .gitignore', shell=False)
+    puts("Updating ignore files.")
+
+    with cd ( remote_path ):
+        with hide('running'):
+
+            cmd = []
+            for line in git_ignore_lines:
+                cmd.append( "echo '{0}' >> .gitignore_new".format(line) )
+
+            run( ';'.join(cmd) )
+
+            run('mv .gitignore_new .gitignore', shell=False)
 
 
 @task
@@ -253,6 +260,10 @@ def sync ( remote_path, local_path, local_branch, git_ignore_lines ):
 def initial_sync ( remote_path, local_path, local_branch, git_ignore_lines ):
     if not os.path.exists( local_path ):
         init( remote_path, local_path, local_branch, git_ignore_lines )
+    else:
+        update_git_ignore_file(remote_path, git_ignore_lines)
+
+
 
     send_remote_changes_to_local( remote_path, local_path )
     send_local_changes_to_remote( remote_path, local_path, local_branch )
@@ -313,7 +324,6 @@ def growl_start( ):
         print 'Unable to send growl notification.'
         print 'Growl is probably not running.'
         print 'GitSync Starting'
-
 
 
 def growl_done( ):
