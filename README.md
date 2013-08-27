@@ -33,13 +33,15 @@ Skip any steps that install software you already have.
    ```sudo pip install fabric```
 6. Install the python library of Mac FS Events
    ```sudo pip install MacFSEvents```
-7. Install the python binding for growl.
+7. Install the python wrapper for Mac OS 10.8 Notification Center.
    ```sudo pip install gntp```
 8. Install libyaml
    ```brew install libyaml```
 9. Install PyYAML
    ```sudo pip install PyYAML```
-10. Install Growl 2 (from the app store) http://growl.info/
+10. Install Ruby and the gem package manager.
+11. Install `terminal-notifier`.
+   ```gem install terminal-notifier```
 
 
 Remote Dependencies
