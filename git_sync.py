@@ -1,28 +1,20 @@
 #!/usr/bin/env python
 
 import os
-import subprocess
 import argparse
-import pprint
-import logging
-import string
 import yaml
-import socket
 
 from signal import pause
 
 from fabric.api import *
 from fabric.utils import puts
-from fabric.contrib.console import confirm
-from fabric.contrib.files import append, contains, exists
-from fabric.colors import blue, cyan, green, magenta, red, white, yellow
+from fabric.contrib.files import exists
+from fabric.colors import cyan
 
 from fsevents import Observer
 from fsevents import Stream
 
-import gntp
-import gntp.notifier
-from gntp.notifier import mini
+from pync import Notifier
 
 # These are a bunch of constants that identify different type of file system
 #  events and the fsevents library uses.
@@ -308,40 +300,30 @@ if remote_user:
     remote_host = remote_user + '@' + remote_host
 
 
-def growl_start():
-    try:
-        mini(
-            "Starting to sync %s and %s on %s" % (
-                local_path,
-                remote_path,
-                remote_host,
-            ),
-            applicationName='GitSync',
-            noteType='Message',
-            title='GitSync Starting'
-        )
-    except socket.error:
-        print('Unable to send growl notification.')
-        print('Growl is probably not running.')
-        print('GitSync Starting')
+def notify_sync_start():
+    Notifier.notify(
+        "Starting to sync %s and %s on %s" % (
+            local_path,
+            remote_path,
+            remote_host,
+        ),
+        title='GitSync'
+    )
 
 
-def growl_done():
-    try:
-        mini(
-            "Completed sync of %s and %s on %s" % (
-                local_path,
-                remote_path,
-                remote_host,
-            ),
-            applicationName='GitSync',
-            noteType='Message',
-            title='GitSync Finished'
-        )
-    except socket.error:
-        print('Unable to send growl notification.')
-        print('Growl is probably not running.')
-        print('GitSync Finished')
+def notify_sync_done():
+    Notifier.notify(
+        "Completed sync of %s and %s on %s" % (
+            local_path,
+            remote_path,
+            remote_host,
+        ),
+        title='GitSync'
+    )
+
+
+def notify_sync_failed():
+    Notifier.notify('Sync Failed', title='GitSync')
 
 
 def run_remote_has_modified_files():
@@ -375,7 +357,7 @@ def run_send_local_changes_to_remote():
 
 
 def run_initial_sync():
-    growl_start()
+    notify_sync_start()
     execute(
         initial_sync,
         host=remote_host,
@@ -384,7 +366,7 @@ def run_initial_sync():
         local_branch=local_branch,
         git_ignore_lines=git_ignore_lines
     )
-    growl_done()
+    notify_sync_done()
 
 
 def callback(event):
@@ -403,7 +385,7 @@ def callback(event):
         #Skip sync for file change that are in the .git directory.
         return
 
-    growl_start()
+    notify_sync_start()
 
     try:
         if run_remote_has_modified_files():
@@ -425,10 +407,10 @@ def callback(event):
         print(type(inst))
         print(inst.args)
         print(inst)
-        growl_failed()
+        notify_sync_failed()
         raise
     else:
-        growl_done()
+        notify_sync_done()
 
 run_initial_sync()
 
