@@ -28,20 +28,19 @@ Skip any steps that install software you already have.
 3. Install python
    ```brew install python```
 4. Install pip
-   ```sudo easy_install pip```
+   ```easy_install pip```
 5. Install fabric
-   ```sudo pip install fabric```
+   ```pip install fabric```
 6. Install the python library of Mac FS Events
-   ```sudo pip install MacFSEvents```
+   ```pip install MacFSEvents```
 7. Install the python wrapper for Mac OS 10.8 Notification Center.
-   ```sudo pip install gntp```
+   ```pip install gntp```
 8. Install libyaml
    ```brew install libyaml```
 9. Install PyYAML
-   ```sudo pip install PyYAML```
-10. Install Ruby and the gem package manager.
-11. Install `terminal-notifier`.
-   ```gem install terminal-notifier```
+   ```pip install PyYAML```
+10. Install `terminal-notifier`.
+   ```brew install terminal-notifier```
 
 
 Remote Dependencies
