@@ -40,7 +40,7 @@ Skip any steps that install software you already have.
 9. Install PyYAML
    ```pip install PyYAML```
 10. Install `terminal-notifier`.
-   ```brew install terminal-notifier```
+    ```brew install terminal-notifier```
 
 
 Remote Dependencies
@@ -75,7 +75,9 @@ On the first sync it will assume the location on the local file system is empty 
 Current Git Users: Caution
 --------------------------
 
-If you are already using git as a version control system, be careful. This has been take in into account (somewhat) but not really tested been tested yet.
+If you are already using git for version control, be careful. This has been take
+into account (somewhat) but has not really been tested yet. In the future we
+would like to fully support that.
 
 
 Running git_sync.py
