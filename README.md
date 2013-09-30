@@ -24,22 +24,36 @@ Skip any steps that install software you already have.
 1. Install Homebrew 
    http://mxcl.github.com/homebrew/
 2. Install git 
+
    ```brew install git```
+
 3. Install python
+
    ```brew install python```
+
 4. Install pip
+ 
    ```easy_install pip```
+
 5. Install fabric
+
    ```pip install fabric```
+
 6. Install the python library of Mac FS Events
+
+
    ```pip install MacFSEvents```
-7. Install the python wrapper for Mac OS 10.8 Notification Center.
-   ```pip install gntp```
-8. Install libyaml
-   ```brew install libyaml```
-9. Install PyYAML
-   ```pip install PyYAML```
-10. Install `terminal-notifier`.
+
+7.  Install libyaml
+
+    ```brew install libyaml```
+
+8.  Install PyYAML
+
+    ```pip install PyYAML```
+
+9. Install terminal-notifier.
+
     ```brew install terminal-notifier```
 
 
