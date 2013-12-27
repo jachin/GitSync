@@ -14,7 +14,7 @@ from fabric.colors import cyan
 from fsevents import Observer
 from fsevents import Stream
 
-from pync import Notifier
+from GitNotified import GitNotified
 
 # These are a bunch of constants that identify different type of file system
 #  events and the fsevents library uses.
@@ -51,23 +51,9 @@ class GitSync:
     #observer
     #stream
 
-    def __init__(self):
+    def __init__(self, config, notify):
 
-        # Setup Parser
-        parser = argparse.ArgumentParser(
-            description='Use git to sync a site on pion to your local machine.'
-        )
-
-        parser.add_argument(
-            'config_file',
-            nargs='?',
-            type=argparse.FileType('r')
-        )
-
-        args = parser.parse_args()
-
-        # Read in config file.
-        config = yaml.safe_load(args.config_file)
+        self.notify = notify
 
         self.local_path = config['local_path']
         self.local_branch = config['local_branch']
@@ -83,11 +69,13 @@ class GitSync:
         if self.remote_user:
             self.remote_host = self.remote_user + '@' + self.remote_host
 
-        self.run_initial_sync()
-
         # Start watching the directory
         self.stream = Stream(self.callback, self.local_path, file_events=True)
         self.observer.schedule(self.stream)
+
+
+    def start(self):
+        self.run_initial_sync()
         self.observer.start()
 
     @task
@@ -311,31 +299,6 @@ class GitSync:
         with lcd(local_path):
             local("git checkout %s" % (local_branch))
 
-    def notify_sync_start(self):
-        Notifier.notify(
-            "Starting to sync %s and %s on %s" % (
-                self.local_path,
-                self.remote_path,
-                self.remote_host,
-            ),
-            title='GitSync'
-        )
-
-
-    def notify_sync_done(self):
-        Notifier.notify(
-            "Completed sync of %s and %s on %s" % (
-                self.local_path,
-                self.remote_path,
-                self.remote_host,
-            ),
-            title='GitSync'
-        )
-
-
-    def notify_sync_failed(self):
-        Notifier.notify('Sync Failed', title='GitSync')
-
 
     def run_remote_has_modified_files(self):
         result = execute(
@@ -371,7 +334,7 @@ class GitSync:
 
 
     def run_initial_sync(self):
-        self.notify_sync_start()
+        self.notify.sync_start(self.local_path, self.remote_path, self.remote_host)
         execute(
             self.initial_sync,
             host=self.remote_host,
@@ -380,7 +343,7 @@ class GitSync:
             local_branch=self.local_branch,
             git_ignore_lines=self.git_ignore_lines
         )
-        self.notify_sync_done()
+        self.notify.sync_done(self.local_path, self.remote_path, self.remote_host)
 
 
     def callback(self, event):
@@ -397,7 +360,7 @@ class GitSync:
             #Skip sync for file change that are in the .git directory.
             return
 
-        self.notify_sync_start()
+        self.notify.sync_start()
 
         try:
             if self.run_remote_has_modified_files():
@@ -419,17 +382,44 @@ class GitSync:
             print(type(inst))
             print(inst.args)
             print(inst)
-            self.notify_sync_failed()
+            self.notify.sync_failed()
             raise
         else:
-            self.notify_sync_done()
+            self.notify.sync_done(self.local_path, self.remote_path, self.remote_host)
 
-git_sync = GitSync()
+    def stop(self):
+        self.observer.unschedule(git_sync.stream)
+        self.observer.stop()
+
+
+def parse_config():
+    # Setup Parser
+    parser = argparse.ArgumentParser(
+        description='Use git to sync a site on pion to your local machine.'
+    )
+
+    parser.add_argument(
+        'config_file',
+        nargs='?',
+        type=argparse.FileType('r')
+    )
+
+    args = parser.parse_args()
+
+    # Read in config file.
+    return yaml.safe_load(args.config_file)
+
+
+config = parse_config()
+notifier = GitNotified()
+
+git_sync = GitSync(config, notifier)
+git_sync.start()
 
 try:
     while 1:
         pause()
 except KeyboardInterrupt:
-    git_sync.observer.unschedule(git_sync.stream)
-    git_sync.observer.stop()
-    git_sync.observer.join()
+    git_sync.stop()
+
+git_sync.observer.join()
