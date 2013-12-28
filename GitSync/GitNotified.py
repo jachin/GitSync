@@ -19,7 +19,6 @@ class GitNotified:
             title='GitSync'
         )
 
-
     def sync_done(self, local_path, remote_path, remote_host):
         Notifier.notify(
             "Completed sync of %s and %s on %s" % (

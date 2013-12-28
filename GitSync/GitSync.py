@@ -214,7 +214,7 @@ class GitSync:
     @task
     def push_local_to_remote(self, local_path, local_branch):
         if not self.local_has_local_branch(local_path, local_branch):
-            self.local_create_local_branch(self, local_path, local_branch)
+            self.local_create_local_branch(local_path, local_branch)
 
         with lcd(local_path):
             local("git push origin %s" % (local_branch))
@@ -274,7 +274,7 @@ class GitSync:
     def init(self, remote_path, local_path, local_branch, git_ignore_lines):
         self.init_remote_master_repository(self, remote_path, local_branch, git_ignore_lines)
         self.get_local_git_clone(self, remote_path, local_path)
-        self.local_create_local_branch(self, local_path, local_branch)
+        self.local_create_local_branch(local_path, local_branch)
         with lcd(local_path):
             local("git checkout %s" % (local_branch))
 
@@ -334,7 +334,7 @@ class GitSync:
             #Skip sync for file change that are in the .git directory.
             return
 
-        self.notify.sync_start()
+        self.notify.sync_start(self.local_path, self.remote_path, self.remote_host)
 
         try:
             if self.run_remote_has_modified_files():
