@@ -73,7 +73,6 @@ class GitSync:
         self.stream = Stream(self.callback, self.local_path, file_events=True)
         self.observer.schedule(self.stream)
 
-
     def start(self):
         self.run_initial_sync()
         self.observer.start()
@@ -102,7 +101,6 @@ class GitSync:
                 run("git add .")
                 run("git commit -m 'add project'")
 
-
     @task
     def update_git_ignore_file(self, remote_path, git_ignore_lines):
 
@@ -118,7 +116,6 @@ class GitSync:
                 run(';'.join(cmd))
 
                 run('mv .gitignore_new .gitignore', shell=False)
-
 
     @task
     def remote_has_modified_files(self, remote_path):
@@ -140,7 +137,6 @@ class GitSync:
                         )
                         return True
 
-
     @task
     def local_has_modified_files(self, local_path):
         with lcd(local_path):
@@ -158,17 +154,14 @@ class GitSync:
                         )
                         return True
 
-
     @task
     def get_remote_git_repo(self, remote_path):
         git_repo = os.path.join(remote_path, '.git')
         return git_repo
 
-
     @task
     def get_local_git_clone(self, remote_path, local_path):
         local("git clone ssh://%s/%s %s" % (env.host, remote_path, local_path))
-
 
     @task
     def commit_remote_modified_files(self, remote_path):
@@ -179,7 +172,6 @@ class GitSync:
             run("git commit -a -m 'committing all changes from %s'" % (remote_path))
             return True
 
-
     @task
     def push_remote_master(self, remote_path, local_branch):
 
@@ -188,7 +180,6 @@ class GitSync:
         with cd(remote_path):
             run("git push origin %s" % (local_branch))
             return True
-
 
     def remote_has_local_branch(self, remote_path, local_branch):
         with cd(remote_path):
@@ -200,18 +191,15 @@ class GitSync:
         with lcd(local_path):
             local('git fetch origin')
 
-
     @task
     def merge_local_master(self, local_path):
         with lcd(local_path):
             local('git merge origin/master')
 
-
     @task
     def pull_and_merge_local(self, local_path):
         self.pull_local(self, local_path)
         self.merge_local_master(self, local_path)
-
 
     @task
     def commit_local_modified_files(self, local_path):
@@ -223,7 +211,6 @@ class GitSync:
                 )
         return True
 
-
     @task
     def push_local_to_remote(self, local_path, local_branch):
         if not self.local_has_local_branch(local_path, local_branch):
@@ -232,11 +219,9 @@ class GitSync:
         with lcd(local_path):
             local("git push origin %s" % (local_branch))
 
-
     def local_create_local_branch(self, local_path, local_branch):
         with lcd(local_path):
             local('git branch %s' % (local_branch), capture=True)
-
 
     def local_has_local_branch(self, local_path, local_branch):
 
@@ -249,12 +234,10 @@ class GitSync:
                     return True
             return False
 
-
     @task
     def merge_local_to_remote(self, remote_path, local_branch):
         with cd(remote_path):
             run('git merge %s' % (local_branch))
-
 
     @task
     def send_local_changes_to_remote(self, remote_path, local_path, local_branch):
@@ -262,12 +245,10 @@ class GitSync:
         self.push_local_to_remote(self, local_path, local_branch)
         self.merge_local_to_remote(self, remote_path, local_branch)
 
-
     @task
     def send_remote_changes_to_local(self, remote_path, local_path):
         self.commit_remote_modified_files(self, remote_path)
         self.pull_and_merge_local(self, local_path)
-
 
     @task
     def sync(self, remote_path, local_path, local_branch, git_ignore_lines):
@@ -280,7 +261,6 @@ class GitSync:
 
         self.send_local_changes_to_remote(self, remote_path, local_path, local_branch)
 
-
     def initial_sync(self, remote_path, local_path, local_branch, git_ignore_lines):
         if not os.path.exists(local_path):
             self.init(self, remote_path, local_path, local_branch, git_ignore_lines)
@@ -290,7 +270,6 @@ class GitSync:
         self.send_remote_changes_to_local(self, remote_path, local_path)
         self.send_local_changes_to_remote(self, remote_path, local_path, local_branch)
 
-
     @task
     def init(self, remote_path, local_path, local_branch, git_ignore_lines):
         self.init_remote_master_repository(self, remote_path, local_branch, git_ignore_lines)
@@ -298,7 +277,6 @@ class GitSync:
         self.local_create_local_branch(self, local_path, local_branch)
         with lcd(local_path):
             local("git checkout %s" % (local_branch))
-
 
     def run_remote_has_modified_files(self):
         result = execute(
@@ -309,7 +287,6 @@ class GitSync:
         )
         return result[self.remote_host]
 
-
     def run_send_remote_changes_to_local(self):
         result = execute(
             self.send_remote_changes_to_local,
@@ -319,7 +296,6 @@ class GitSync:
             local_path=self.local_path
         )
         return result[self.remote_host]
-
 
     def run_send_local_changes_to_remote(self):
         result = execute(
@@ -332,7 +308,6 @@ class GitSync:
         )
         return result[self.remote_host]
 
-
     def run_initial_sync(self):
         self.notify.sync_start(self.local_path, self.remote_path, self.remote_host)
         execute(
@@ -344,7 +319,6 @@ class GitSync:
             git_ignore_lines=self.git_ignore_lines
         )
         self.notify.sync_done(self.local_path, self.remote_path, self.remote_host)
-
 
     def callback(self, event):
 
