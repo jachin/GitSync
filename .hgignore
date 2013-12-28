@@ -1,0 +1,4 @@
+syntax: glob
+.idea/
+*.DS_Store
+*.pyc
