@@ -22,35 +22,39 @@ OS X Dependencies
 
 Skip any steps that install software you already have.
 
-1. Install Homebrew 
+#. Install Homebrew 
    http://mxcl.github.com/homebrew/
-2. Install git 
+#. Install git::
 
-   ```brew install git```
+  brew install git
 
-3. Install python
+#. Install python::
 
-   ```brew install python```
+   brew install python
 
-4. Install pip
+#. Install pip::
  
-   ```easy_install pip```
+  easy_install pip
 
-5. Install fabric
+#. Install fabric::
 
-   ```pip install fabric```
+   pip install fabric
 
-6. Install the python library of Mac FS Events
+#. Install the python library of Mac FS Events::
 
-   ```pip install MacFSEvents```
+   pip install MacFSEvents
 
-7.  Install PyYAML
+#.  Install libyaml::
 
-    ```pip install PyYAML```
+    brew install libyaml
 
-8. Install terminal-notifier.
+#.  Install PyYAML::
 
-    ```brew install terminal-notifier```
+    pip install PyYAML
+
+#. Install terminal-notifier::
+
+    brew install terminal-notifier
 
 
 Remote Dependencies
@@ -58,11 +62,11 @@ Remote Dependencies
 
 The Remote system needs to be setup with the following things.
 
-1. SSH access.
+#. SSH access.
 
-2. SSH Keys to allow authentication with having to put in passwords.
+#. SSH Keys to allow authentication with having to put in passwords.
 
-3. Git needs to be installed.
+#. Git needs to be installed.
 
 
 Configuration
@@ -72,9 +76,9 @@ The assumption git sync makes (right now) is that the latest version of your stu
 
 On the first sync it will assume the location on the local file system is empty and the first thing it needs to do is pull down the files from the remote system.
 
-1. Copy the example configuration file (examples/git_sync.yaml) giving it an appropriate name.
+#. Copy the example configuration file (examples/git_sync.yaml) giving it an appropriate name.
 
-2. Set all the values in the config file.
+#. Set all the values in the config file.
    - local_path: This is the path on your local machine where you want your files to go.
    - local_branch_name: The name of the git branch you want git sync to use.
    - remote_host: The IP or domain name of the remote system you want to use.
@@ -93,8 +97,8 @@ would like to fully support that.
 Running git_sync.py
 ===================
 
-In Terminal run the following command:
-```python path/to/git_sync.py path/to/your/config/file.yaml```
+In Terminal run the following command::
+  python path/to/git_sync.py path/to/your/config/file.yaml
 
 It should do some setup work. This could take a lot time if this is the initial sync, if there are a lot of changes or if the network connection is slow.
 
