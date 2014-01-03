@@ -2,3 +2,5 @@
 *.pyc
 *.cfg
 *.ini
+MANIFEST
+dist
