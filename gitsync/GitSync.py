@@ -384,7 +384,8 @@ def parse_config():
     return yaml.safe_load(args.config_file)
 
 
-if __name__ == '__main__':
+def main():
+    global git_sync
     config = parse_config()
     notifier = GitNotified()
 
@@ -398,3 +399,6 @@ if __name__ == '__main__':
         git_sync.stop()
 
     git_sync.observer.join()
+
+if __name__ == '__main__':
+    main()
