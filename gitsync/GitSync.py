@@ -4,12 +4,12 @@ import os
 import argparse
 import yaml
 
-from signal import pause
-
 from fabric.api import *
 from fabric.utils import puts
 from fabric.contrib.files import exists
 from fabric.colors import cyan
+
+from signal import pause
 
 from fsevents import Observer
 from fsevents import Stream
@@ -369,7 +369,7 @@ class GitSync:
 def parse_config():
     # Setup Parser
     parser = argparse.ArgumentParser(
-        description='Use git to sync a site on pion to your local machine.'
+        description='Use git to sync a site on a server to your local machine.'
     )
 
     parser.add_argument(
@@ -384,16 +384,17 @@ def parse_config():
     return yaml.safe_load(args.config_file)
 
 
-config = parse_config()
-notifier = GitNotified()
+if __name__ == '__main__':
+    config = parse_config()
+    notifier = GitNotified()
 
-git_sync = GitSync(config, notifier)
-git_sync.start()
+    git_sync = GitSync(config, notifier)
+    git_sync.start()
 
-try:
-    while 1:
-        pause()
-except KeyboardInterrupt:
-    git_sync.stop()
+    try:
+        while 1:
+            pause()
+    except KeyboardInterrupt:
+        git_sync.stop()
 
-git_sync.observer.join()
+    git_sync.observer.join()
