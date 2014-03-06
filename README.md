@@ -21,41 +21,36 @@ OS X Dependencies
 
 Skip any steps that install software you already have.
 
-1. Install Homebrew 
+1. Install the Xcode and the command line tools.
+   https://duckduckgo.com/?q=OS+X+xcode+command+line+tools
+
+2. Install Homebrew
    http://mxcl.github.com/homebrew/
-2. Install git 
+
+3. Install git
 
    ```brew install git```
 
-3. Install python
+4. Install python
 
    ```brew install python```
 
-4. Install pip
- 
-   ```easy_install pip```
-
-5. Install fabric
-
-   ```pip install fabric```
-
-6. Install the python library of Mac FS Events
-
-
-   ```pip install MacFSEvents```
-
-7.  Install libyaml
-
-    ```brew install libyaml```
-
-8.  Install PyYAML
-
-    ```pip install PyYAML```
-
-9. Install terminal-notifier.
+5. Install terminal-notifier.
 
     ```brew install terminal-notifier```
 
+6. Install pip
+
+   ```easy_install pip```
+
+7. Install GitSync
+
+   ``pip install GitSync``
+
+8. Manually install the latest version of pync. If you get errors complaining
+   about pync not being properly installed you should manually install the
+   latest version from here.
+   https://github.com/SeTeM/pync
 
 Remote Dependencies
 -------------------
@@ -93,12 +88,11 @@ If you are already using git for version control, be careful. This has been take
 into account (somewhat) but has not really been tested yet. In the future we
 would like to fully support that.
 
-
 Running git_sync.py
 -------------------
 
 In Terminal run the following command:
-```python path/to/git_sync.py path/to/your/config/file.yaml```
+```git_sync path/to/your/config/file.yaml```
 
 It should do some setup work. This could take a lot time if this is the initial sync, if there are a lot of changes or if the network connection is slow.
 
