@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='GitSync',
-    version='0.1.0',
+    version='0.1.1',
     author='Jachin Rupe',
     author_email='jachin@clockwork.net',
     packages=['gitsync'],
