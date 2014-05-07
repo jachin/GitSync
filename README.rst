@@ -30,19 +30,19 @@ Skip any steps that install software you already have.
 
 #. Install git
 
-   ```brew install git```
+   ``brew install git``
 
 #. Install python
 
-   ```brew install python```
+   ``brew install python``
 
 #. Install terminal-notifier.
 
-    ```brew install terminal-notifier```
+   ``brew install terminal-notifier``
 
 #. Install pip
 
-   ```easy_install pip```
+   ``easy_install pip``
 
 #. Install GitSync
 
