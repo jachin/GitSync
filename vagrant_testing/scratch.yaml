@@ -1,0 +1,7 @@
+
+local_path: /vagrant/scratch
+local_branch: unittesting
+remote_host: 10.10.10.11
+remote_user: vagrant
+remote_path: /home/vagrant/scratch
+
