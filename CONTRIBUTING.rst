@@ -8,7 +8,7 @@ little bit helps, and credit will always be given.
 Bug reports
 ===========
 
-When `reporting a bug <https://github.com/jachin/GitSync/issues>`_ please include:
+When `reporting a bug <https://github.com/clockwork/GitSync/issues>`_ please include:
 
     * Your operating system name and version.
     * Any details about your local setup that might be helpful in troubleshooting.
@@ -24,7 +24,7 @@ articles, and such.
 Feature requests and feedback
 =============================
 
-The best way to send feedback is to file an issue at https://github.com/jachin/GitSync/issues.
+The best way to send feedback is to file an issue at https://github.com/clockwork/GitSync/issues.
 
 If you are proposing a feature:
 
@@ -37,7 +37,7 @@ Development
 
 To set up `GitSync` for local development:
 
-1. `Fork GitSync on GitHub <https://github.com/jachin/GitSync/fork>`_.
+1. `Fork GitSync on GitHub <https://github.com/clockwork/GitSync/fork>`_.
 2. Clone your fork locally::
 
     git clone git@github.com:your_name_here/GitSync.git
@@ -87,3 +87,4 @@ To run a subset of tests::
 To run all the test environments in *parallel* (you need to ``pip install detox``)::
 
     detox
+

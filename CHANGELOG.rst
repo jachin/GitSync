@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.1.2 (2014-06-10)
+0.1.2 (2014-07-18)
 -----------------------------------------
 
-* First release on PyPI.
+* Better library packages system.
