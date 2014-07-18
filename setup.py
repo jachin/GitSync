@@ -1,12 +1,25 @@
-from distutils.core import setup
+# -*- encoding: utf8 -*-
+from setuptools import setup, find_packages
+
+import os
+import io
+
+def read(*names, **kwargs):
+    return io.open(
+        os.path.join(os.path.dirname(__file__), *names),
+        encoding=kwargs.get('encoding', 'utf8')
+    ).read()
 
 setup(
     name='GitSync',
-    version='0.1.1',
+    version='0.1.2',
     author='Jachin Rupe',
     author_email='jachin@clockwork.net',
-    packages=['gitsync'],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     scripts=['bin/git_sync'],
+    include_package_data=True,
+    zip_safe=False,
     url='http://pypi.python.org/pypi/GitSync/',
     license='LICENSE.txt',
     description='Use git to sync a project directory on an OS X client with a'
