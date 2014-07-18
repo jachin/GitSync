@@ -44,6 +44,5 @@ setup(
         "Fabric >= 1.8.0",
         "MacFSEvents >= 0.3",
         "PyYAML >= 3.10",
-        "pync >= 1.4",
     ],
 )
