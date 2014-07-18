@@ -28,6 +28,7 @@ remote_user: vagrant
 remote_path: /home/vagrant/scratch
 """.format(host)
 
+@task
 def setup_remote_repo():
     delete_remote_repo()
     run( 'mkdir /home/vagrant/scratch' );
@@ -41,8 +42,14 @@ def setup_remote_repo():
         append('three.txt', text_3)
 
 
+@task
 def delete_remote_repo():
     run("rm -Rf /home/vagrant/scratch")
+
+@task
+def update_yaml():
+    with lcd('/vagrant'):
+        local("echo '{0}' > scratch.yaml".format(config_yaml));
 
 
 class GitSyncTest(unittest.TestCase):
@@ -67,14 +74,14 @@ class GitSyncTest(unittest.TestCase):
                 self.assertTrue(run("ls one.txt").succeeded)
                 self.assertTrue(run("ls not_real.txt").failed)
 
-    def test_simple_change(self):
+    @task
+    def init_git_sync(self):
         with lcd('/vagrant'):
             local("echo '{0}' > scratch.yaml".format(config_yaml));
-        execute(
-            self.simple_change,
-            self,
-            hosts=[host],
-        )
+
+    def test_simple_change(self):
+        update_yaml()
+        execute(self.simple_change,self,hosts=[host],)
 
 if __name__ == '__main__':
     unittest.main()
