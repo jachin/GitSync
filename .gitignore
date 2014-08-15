@@ -4,3 +4,6 @@
 *.ini
 MANIFEST
 dist
+src/GitSync.egg-info
+.coverage
+.tox

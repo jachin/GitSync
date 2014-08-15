@@ -4,7 +4,7 @@ import os
 import argparse
 import yaml
 
-from fabric.api import *
+from fabric.api import run, task, cd, hide, abort, settings, lcd, local, env, execute
 from fabric.utils import puts
 from fabric.contrib.files import exists
 from fabric.colors import cyan
@@ -48,8 +48,6 @@ class GitSync:
     remote_host = ''
     remote_user = ''
     git_ignore_lines = ''
-    #observer
-    #stream
 
     def __init__(self, config, notify):
 
@@ -331,7 +329,7 @@ class GitSync:
         git_dir = os.path.join(self.local_path, '.git')
 
         if git_dir in filename:
-            #Skip sync for file change that are in the .git directory.
+            # Skip sync for file change that are in the .git directory.
             return
 
         self.notify.sync_start(self.local_path, self.remote_path, self.remote_host)
@@ -362,7 +360,7 @@ class GitSync:
             self.notify.sync_done(self.local_path, self.remote_path, self.remote_host)
 
     def stop(self):
-        self.observer.unschedule(git_sync.stream)
+        self.observer.unschedule(self.stream)
         self.observer.stop()
 
 
@@ -399,6 +397,7 @@ def main():
         git_sync.stop()
 
     git_sync.observer.join()
+    return 0
 
 if __name__ == '__main__':
     main()

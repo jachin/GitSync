@@ -38,5 +38,5 @@ html_sidebars = {
 }
 html_short_title = '%s-%s' % (project, version)
 html_theme_options = {
-    'githuburl': 'https://github.com/jachin/GitSync/'
+    'githuburl': 'https://github.com/ClockworkNet/GitSync'
 }

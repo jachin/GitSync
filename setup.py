@@ -18,7 +18,7 @@ def read(*names, **kwargs):
 
 setup(
     name='GitSync',
-    version='0.1.2',
+    version="0.1.2",
     license='MIT',
     description='Use git to sync a project directory on an OS X client with a remote server.',
     long_description="%s\n%s" % (read("README.rst"), re.sub(":obj:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst"))),

@@ -4,4 +4,4 @@ Reference
 .. toctree::
     :glob:
 
-    GitSync*
+    gitsync*

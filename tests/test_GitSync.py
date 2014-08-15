@@ -1,4 +1,4 @@
-from GitSync.__main__ import main
+from gitsync import GitSync
 
 def test_main():
-    assert main([]) == 0
+    assert GitSync.kFSEventStreamEventFlagNone == 0x00000000

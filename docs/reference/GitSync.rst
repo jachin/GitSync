@@ -1,5 +1,5 @@
 GitSync
 =============================
 
-.. automodule:: GitSync
+.. automodule:: gitsync
     :members:
