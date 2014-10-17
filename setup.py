@@ -18,7 +18,7 @@ def read(*names, **kwargs):
 
 setup(
     name='GitSync',
-    version="0.1.2",
+    version="0.2",
     license='MIT',
     description='Use git to sync a project directory on an OS X client with a remote server.',
     long_description="%s\n%s" % (read("README.rst"), re.sub(":obj:`~?(.*?)`", r"``\1``", read("CHANGELOG.rst"))),
@@ -41,8 +41,10 @@ setup(
         'Topic :: Utilities',
     ],
     install_requires=[
+        "GitSyncLib >= 0.1.3",
         "Fabric >= 1.8.0",
         "MacFSEvents >= 0.3",
         "PyYAML >= 3.10",
+        "pync >= 1.6.1",
     ],
 )
