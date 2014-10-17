@@ -26,7 +26,7 @@ Skip any steps that install software you already have.
    https://duckduckgo.com/?q=OS+X+xcode+command+line+tools
 
 #. Install Homebrew
-   http://mxcl.github.com/homebrew/
+   http://mxcl.github.io/homebrew/
 
 #. Install git
 
@@ -95,6 +95,7 @@ Running git_sync.py
 ===================
 
 In Terminal run the following command::
+
   git_sync path/to/your/config/file.yaml
 
 It should do some setup work. This could take a lot time if this is the initial sync, if there are a lot of changes or if the network connection is slow.
@@ -108,4 +109,4 @@ License
 
 - [LICENSE](LICENSE) ([MIT License][MIT])
 
-[MIT]: http://www.opensource.org/licenses/MIT "The MIT License (MIT)"
+[MIT]: http://opensource.org/licenses/MIT "The MIT License (MIT)"

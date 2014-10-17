@@ -1,2 +1,8 @@
 include *.txt
+include *.md
+include *.rst
+include *.yml
+include LICENSE
 recursive-include docs *.txt
+recursive-include docs *.py
+recursive-include docs *.rst
