@@ -41,7 +41,7 @@ setup(
         'Topic :: Utilities',
     ],
     install_requires=[
-        "GitSyncLib >= 0.1.3",
+        "GitSyncLib >= 0.1.4",
         "Fabric >= 1.8.0",
         "MacFSEvents >= 0.3",
         "PyYAML >= 3.10",
