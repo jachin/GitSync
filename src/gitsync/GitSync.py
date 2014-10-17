@@ -39,9 +39,9 @@ import gitsynclib.GitSync
 
 observer = Observer()
 notifier = None
-stream   = None
+stream = None
 git_sync = None
-config   = None
+config = None
 
 
 def parse_config():
@@ -72,7 +72,6 @@ def stop():
     observer.unschedule(stream)
     observer.stop()
     observer.join()
-
 
 def callback(event):
 
